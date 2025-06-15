@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Поддержка Telegram</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #container {
+      display: flex;
+      width: 960px;
+      height: 640px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      background: #fff;
+    }
+
+    #sidebar {
+      width: 240px;
+      background: #fdfdfd;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #sidebar h2 {
+      font-size: 16px;
+      padding: 16px;
+      margin: 0;
+      font-weight: 600;
+      border-bottom: 1px solid #eee;
+    }
+
+    #users {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    #users li {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.2s;
+    }
+
+    #users li:hover {
+      background: #f3f7fa;
+    }
+
+    #users li.active {
+      background: #e5f2ff;
+      font-weight: 500;
+    }
+
+    #chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fafafa;
+    }
+
+    #messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 70%;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #e0f4ff;
+      align-self: flex-start;
+    }
+
+    .support {
+      background: #d1f2dc;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    #form {
+      display: flex;
+      padding: 12px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+
+    #text {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    #text:focus {
+      border-color: #2196f3;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 16px;
+      background-color: #2196f3;
+      color: white;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <div id="sidebar">
+    <h2>Пользователи</h2>
+    <ul id="users"></ul>
+  </div>
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="form">
+      <input type="text" id="text" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter') sendMessage()" />
+      <button onclick="sendMessage()">Отправить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedChatId = null;
+
+  async function loadUsers() {
+    const res = await fetch('/chat_ids');
+    const chatIds = await res.json();
+    const userList = document.getElementById('users');
+    userList.innerHTML = '';
+    chatIds.forEach(id => {
+      const li = document.createElement('li');
+      li.textContent = `Пользователь ${id}`;
+      li.onclick = () => selectChat(id, li);
+      if (id === selectedChatId) li.classList.add('active');
+      userList.appendChild(li);
+    });
+  }
+
+  async function selectChat(chatId, liElement) {
+    selectedChatId = chatId;
+    document.querySelectorAll('#users li').forEach(li => li.classList.remove('active'));
+    liElement.classList.add('active');
+    await loadMessages();
+  }
+
+  async function loadMessages() {
+    if (!selectedChatId) return;
+    const res = await fetch(`/messages?chat_id=${selectedChatId}`);
+    const messages = await res.json();
+    const container = document.getElementById('messages');
+    container.innerHTML = '';
+    messages.forEach(m => {
+      const div = document.createElement('div');
+      div.className = `message ${m.from}`;
+      div.textContent = m.text;
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('text');
+    const text = input.value.trim();
+    if (!selectedChatId || !text) {
+      alert("Выберите пользователя и введите сообщение");
+      return;
+    }
+    const res = await fetch('/send', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({chat_id: selectedChatId, text})
+    });
+    if (res.ok) {
+      input.value = '';
+      await loadMessages();
+    } else {
+      alert("Ошибка отправки");
+    }
+  }
+
+  setInterval(() => {
+    loadUsers();
+    if (selectedChatId) loadMessages();
+  }, 3000);
+
+  loadUsers();
+</script>
+</body>
+</html>
