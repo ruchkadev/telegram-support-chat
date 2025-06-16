@@ -1,22 +1,21 @@
-
 # Telegram Support Chat Bot
 
-Простой Telegram бот для поддержки пользователей с веб-интерфейсом для просмотра и отправки сообщений.
+A simple Telegram bot for user support with a web interface to view and send messages.
 
 ---
 
-## Описание
+## Description
 
-Этот проект реализует Telegram бота, который принимает сообщения от пользователей и позволяет поддержке отвечать им через веб-интерфейс.
+This project implements a Telegram bot that receives messages from users and allows support agents to reply via a web interface.
 
-- Сообщения сохраняются в базе TinyDB.
-- Используется FastAPI для API и веб-интерфейса.
-- Веб-интерфейс позволяет видеть список пользователей, читать и отправлять сообщения.
-- Асинхронные вызовы для работы с Telegram API и базой.
+- Messages are stored in a TinyDB database.
+- FastAPI is used for both the API and the web interface.
+- The web interface displays the list of users, message history, and allows sending replies.
+- Asynchronous operations are used for Telegram API communication and database access.
 
 ---
 
-## Требования
+## Requirements
 
 - Python 3.8+
 - FastAPI
@@ -26,28 +25,27 @@
 
 ---
 
+## Running
 
-## Запуск
-
-1. Запустить локальный сервер:
+1. Start the local server:
 
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-2. Запустить [ngrok](https://ngrok.com) для проброса локального сервера в интернет:
+2. Start [ngrok](https://ngrok.com) to expose your local server:
 
 ```bash
 ngrok http 8000
 ```
 
-3. Настроить вебхук Telegram, заменив `<TOKEN>` и `<NGROK_URL>`:
+3. Set the Telegram webhook, replacing `<TOKEN>` and `<NGROK_URL>`:
 
 ```bash
 curl -X GET "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<NGROK_URL>/webhook"
 ```
 
-4. Открыть веб-интерфейс по адресу:
+4. Open the web interface:
 
 ```
 http://localhost:8000/
@@ -55,34 +53,32 @@ http://localhost:8000/
 
 ---
 
-## Использование
+## Usage
 
-- Веб-интерфейс позволяет выбрать пользователя из списка и видеть историю переписки.
-- Поддержка может отправлять ответы, которые придут пользователю в Telegram.
-- Все сообщения сохраняются в базе TinyDB `chat_db.json`.
-
----
-
-## Переменные окружения
-
-- `TELEGRAM_BOT_TOKEN` — токен вашего Telegram бота.
+- The web interface lets you select a user from the list and view the message history.
+- Support agents can send replies, which will be delivered to users via Telegram.
+- All messages are saved in the TinyDB database `chat_db.json`.
 
 ---
 
-## Структура проекта
+## Environment Variables
+
+- `TELEGRAM_BOT_TOKEN` — your Telegram bot token.
+
+---
+
+## Project Structure
 
 ```
 .
-├── main.py            # Основной файл приложения FastAPI
-├── chat_db.json       # База данных TinyDB (создаётся автоматически)
-├── static/            # Статические файлы для веб-интерфейса (HTML, CSS, JS)
-└── README.md          # Это описание
+├── main.py            # Main FastAPI application file
+├── chat_db.json       # TinyDB database (created automatically)
+├── static/            # Static files for the web interface (HTML, CSS, JS)
+└── README.md          # This description
 ```
 
 ---
 
-## Лицензия
+## License
 
-MIT
-
-
+MIT License
