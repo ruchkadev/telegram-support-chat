@@ -3,7 +3,7 @@
 A simple Telegram bot for user support with a web interface to view and send messages.
 
 
-## Description
+## 🚀 Description 
 
 This project implements a Telegram bot that receives messages from users and allows support agents to reply via a web interface.
 
@@ -16,7 +16,7 @@ This project implements a Telegram bot that receives messages from users and all
 For a standalone executable (.exe) version of a Telegram support client with a desktop interface built with Tauri and Node.js, see [telegram-support-client](https://github.com/ruchkadev/telegram-support-client).
 
 
-## Requirements
+## 🧩 Requirements
 
 - Python 3.8+
 - FastAPI
@@ -25,7 +25,7 @@ For a standalone executable (.exe) version of a Telegram support client with a d
 - tinydb
 
 
-## Running
+## 📦 Running
 
 1. Start the local server:
 
@@ -52,21 +52,21 @@ http://localhost:8000/
 ```
 
 
-## Usage
+## 🛠️ Usage
 
 - The web interface lets you select a user from the list and view the message history.
 - Support agents can send replies, which will be delivered to users via Telegram.
 - All messages are saved in the TinyDB database `chat_db.json`.
 
 
-## Environment Variables
+## 🔑 Environment Variables
 
 - `TELEGRAM_BOT_TOKEN` — your Telegram bot token.
 
 
-## Project Structure
+## 🗂 Project Structure
 
-.
+```
 ├── main.py            # Main FastAPI application file
 ├── chat_db.json       # TinyDB database (created automatically)
 ├── static/            # Static files for the web interface (HTML, CSS, JS)
@@ -74,6 +74,6 @@ http://localhost:8000/
 ```
 
 
-## License
+## 📄 License
 
 MIT License
